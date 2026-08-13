@@ -26,16 +26,28 @@ interface AppState extends AuthState {
   setTheme: (theme: ThemeMode) => void;
 }
 
+const STORAGE_KEY = 'resolutions-state';
+const defaultAppState = {
+  categories: initialCategories,
+  profile: initialProfile,
+  theme: 'classic' as ThemeMode,
+  token: null,
+  user: null
+};
+
+const isValidTheme = (theme: unknown): theme is ThemeMode => theme === 'classic' || theme === 'modern' || theme === 'dark' || theme === 'luxury';
+
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
-      token: null,
-      user: null,
-      categories: initialCategories,
-      profile: initialProfile,
-      theme: 'classic',
+      ...defaultAppState,
       setAuthSession: (token, user) => set({ token, user }),
-      clearAuthSession: () => set({ token: null, user: null, categories: initialCategories, profile: initialProfile }),
+      clearAuthSession: () => {
+        set({ ...defaultAppState });
+        if (typeof window !== 'undefined') {
+          window.localStorage.removeItem(STORAGE_KEY);
+        }
+      },
       setCategories: (categories) => set({ categories }),
       updateCategory: (categoryId, updates) => set((state) => ({
         categories: state.categories.map((category) => category.id === categoryId ? { ...category, ...updates } : category)
@@ -80,7 +92,8 @@ export const useAppStore = create<AppState>()(
       setTheme: (theme) => set({ theme })
     }),
     {
-      name: 'resolutions-state',
+      name: STORAGE_KEY,
+      version: 2,
       partialize: (state) => ({
         theme: state.theme,
         token: state.token,
@@ -90,10 +103,10 @@ export const useAppStore = create<AppState>()(
         const state = persisted as Partial<{ theme: ThemeMode; token: string | null; user: { id: number; email: string; full_name?: string | null; is_active: boolean } | null }> | null;
 
         if (!state) {
-          return { categories: initialCategories, profile: initialProfile, theme: 'classic' as ThemeMode, token: null, user: null };
+          return { ...defaultAppState };
         }
 
-        const nextTheme = state.theme === 'modern' || state.theme === 'dark' || state.theme === 'classic' || state.theme === 'luxury' ? state.theme : 'classic';
+        const nextTheme = isValidTheme(state.theme) ? state.theme : 'classic';
 
         return {
           categories: initialCategories,
@@ -102,6 +115,14 @@ export const useAppStore = create<AppState>()(
           token: state.token ?? null,
           user: state.user ?? null
         };
+      },
+      onRehydrateStorage: () => (state) => {
+        if (!state) {
+          return;
+        }
+
+        state.categories = initialCategories;
+        state.profile = initialProfile;
       }
     }
   )

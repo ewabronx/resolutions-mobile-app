@@ -9,6 +9,8 @@ import CategoryDetailScreen from './pages/CategoryDetailScreen';
 import RadarScreen from './pages/RadarScreen';
 import ProfileScreen from './pages/ProfileScreen';
 
+const STORAGE_KEY = 'resolutions-state';
+
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,6 +52,28 @@ function App() {
       isMounted = false;
     };
   }, [token, setProfile, setTheme, setCategories]);
+
+  useEffect(() => {
+    if (!token && typeof window !== 'undefined') {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (!stored) return;
+
+    try {
+      const parsed = JSON.parse(stored) as { state?: { token?: string | null; user?: unknown } };
+      if (!parsed.state || (!parsed.state.token && !parsed.state.user)) {
+        window.localStorage.removeItem(STORAGE_KEY);
+      }
+    } catch {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  }, []);
 
   const handleBack = () => navigate(-1);
 

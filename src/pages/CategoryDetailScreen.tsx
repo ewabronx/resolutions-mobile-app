@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { ArrowLeft, Pencil, Plus, Trash2 } from 'lucide-react';
-import { createGoal, deleteGoal as deleteGoalApi, updateGoal as updateGoalApi } from '../lib/api';
+import { createGoal, deleteGoal as deleteGoalApi, syncAppDataFromApi, updateGoal as updateGoalApi } from '../lib/api';
 import { useAppStore } from '../store';
 import { categoryIcons } from '../utils/icons';
 
@@ -15,6 +15,7 @@ export default function CategoryDetailScreen({ onBack }: CategoryDetailScreenPro
   const theme = useAppStore((state) => state.theme);
   const category = useAppStore((state) => state.categories.find((item) => item.id === id));
   const token = useAppStore((state) => state.token);
+  const setCategories = useAppStore((state) => state.setCategories);
   const addGoalLocal = useAppStore((state) => state.addGoal);
   const toggleGoalLocal = useAppStore((state) => state.toggleGoal);
   const updateGoalLocal = useAppStore((state) => state.updateGoal);
@@ -60,8 +61,12 @@ export default function CategoryDetailScreen({ onBack }: CategoryDetailScreenPro
             category_id: Number(category.id),
             title: trimmedTitle,
             description: trimmedDescription ?? null,
-            is_completed: category.goals.find((goal) => goal.id === editingGoalId)?.isCompleted ?? false
+            is_completed: category.goals.find((goal) => goal.id === editingGoalId)?.isCompleted ?? false,
+            target_date: null,
+            order_index: category.goals.findIndex((goal) => goal.id === editingGoalId)
           });
+          const refreshed = await syncAppDataFromApi(token);
+          setCategories(refreshed.categories);
         }
       }
       setEditingGoalId(null);
@@ -72,9 +77,13 @@ export default function CategoryDetailScreen({ onBack }: CategoryDetailScreenPro
           title: trimmedTitle,
           description: trimmedDescription ?? null,
           is_completed: false,
-          order_index: category.goals.length
+          order_index: category.goals.length,
+          target_date: null
         });
-        addGoalLocal(category.id, trimmedTitle, trimmedDescription, String(created.id));
+        if (created) {
+          const refreshed = await syncAppDataFromApi(token);
+          setCategories(refreshed.categories);
+        }
       } else {
         addGoalLocal(category.id, trimmedTitle, trimmedDescription);
       }
@@ -103,8 +112,12 @@ export default function CategoryDetailScreen({ onBack }: CategoryDetailScreenPro
       category_id: Number(category.id),
       title: currentGoal.title,
       description: currentGoal.description ?? null,
-      is_completed: !currentGoal.isCompleted
+      is_completed: !currentGoal.isCompleted,
+      target_date: null,
+      order_index: category.goals.findIndex((goal) => goal.id === goalId)
     });
+    const refreshed = await syncAppDataFromApi(token);
+    setCategories(refreshed.categories);
   };
 
   const handleDeleteGoal = async (goalId: string) => {
@@ -114,6 +127,8 @@ export default function CategoryDetailScreen({ onBack }: CategoryDetailScreenPro
     const numericGoalId = Number(goalId);
     if (!Number.isNaN(numericGoalId)) {
       await deleteGoalApi(token, numericGoalId);
+      const refreshed = await syncAppDataFromApi(token);
+      setCategories(refreshed.categories);
     }
   };
 
