@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Radar, User, Bell } from 'lucide-react';
+import { syncAppDataFromApi } from './lib/api';
 import { useAppStore } from './store';
+import AuthScreen from './pages/AuthScreen';
 import HomeScreen from './pages/HomeScreen';
 import CategoryDetailScreen from './pages/CategoryDetailScreen';
 import RadarScreen from './pages/RadarScreen';
@@ -12,12 +14,42 @@ function App() {
   const navigate = useNavigate();
   const categories = useAppStore((state) => state.categories);
   const theme = useAppStore((state) => state.theme);
+  const token = useAppStore((state) => state.token);
+  const setProfile = useAppStore((state) => state.setProfile);
+  const setTheme = useAppStore((state) => state.setTheme);
+  const setCategories = useAppStore((state) => state.setCategories);
 
   const progress = useMemo(() => {
     const total = categories.reduce((sum, category) => sum + category.goals.length, 0);
     const completed = categories.reduce((sum, category) => sum + category.goals.filter((goal) => goal.isCompleted).length, 0);
     return total === 0 ? 0 : Math.round((completed / total) * 100);
   }, [categories]);
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    let isMounted = true;
+
+    const hydrate = async () => {
+      try {
+        const payload = await syncAppDataFromApi(token);
+        if (!isMounted) return;
+        setProfile(payload.profile);
+        setTheme(payload.theme);
+        setCategories(payload.categories);
+      } catch (error) {
+        console.error('Failed to hydrate app data from API', error);
+      }
+    };
+
+    void hydrate();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token, setProfile, setTheme, setCategories]);
 
   const handleBack = () => navigate(-1);
 
@@ -48,6 +80,10 @@ function App() {
     dark: 'text-[#d1d5db]',
     luxury: 'text-[#f6d79a]'
   }[theme];
+
+  if (!token) {
+    return <AuthScreen />;
+  }
 
   return (
     <div className={`min-h-screen flex justify-center ${rootClasses}`}>

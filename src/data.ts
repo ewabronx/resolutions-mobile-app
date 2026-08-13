@@ -2,36 +2,28 @@ import type { Category, UserProfile } from './types';
 
 export const initialCategories: Category[] = [
   {
-    id: 'health',
+    id: 'zdrowie',
     title: 'ZDROWIE',
     description: 'Dbaj o równowagę ciała, snu i energii.',
     iconName: 'HeartPulse',
     bgColor: '#798165',
-    goals: [
-      { id: 'h1', title: 'Spacer 20 minut dziennie', isCompleted: true },
-      { id: 'h2', title: 'Sen między 23:00 a 00:00', isCompleted: false }
-    ]
+    goals: [{ id: 'g-zdrowie', title: 'Spacer 20 minut dziennie', isCompleted: true }]
   },
   {
-    id: 'finance',
+    id: 'finanse',
     title: 'FINANSE',
     description: 'Buduj bezpieczeństwo finansowe krok po kroku.',
     iconName: 'Wallet',
     bgColor: '#798165',
-    goals: [
-      { id: 'f1', title: 'Odłożyć 10% pensji', isCompleted: false },
-      { id: 'f2', title: 'Przejrzeć miesięczne wydatki', isCompleted: true }
-    ]
+    goals: [{ id: 'g-finanse', title: 'Odłożyć 10% pensji', isCompleted: false }]
   },
   {
-    id: 'work',
+    id: 'praca',
     title: 'PRACA',
     description: 'Skup się na jakości i konsekwencji.',
     iconName: 'Briefcase',
     bgColor: '#798165',
-    goals: [
-      { id: 'w1', title: 'Ukończyć jeden priorytet dziennie', isCompleted: false }
-    ]
+    goals: [{ id: 'g-praca', title: 'Ukończyć jeden priorytet dziennie', isCompleted: false }]
   },
   {
     id: 'hobby',
@@ -39,39 +31,31 @@ export const initialCategories: Category[] = [
     description: 'Znajdź czas na przyjemność i ciekawość.',
     iconName: 'Palette',
     bgColor: '#96584E',
-    goals: [
-      { id: 'hh1', title: 'Czas na malowanie co tydzień', isCompleted: true }
-    ]
+    goals: [{ id: 'g-hobby', title: 'Czas na malowanie co tydzień', isCompleted: true }]
   },
   {
-    id: 'family',
+    id: 'rodzina',
     title: 'RODZINA',
     description: 'Buduj bliskość i wspólne chwile.',
     iconName: 'Home',
     bgColor: '#96584E',
-    goals: [
-      { id: 'fa1', title: 'Kolacja razem w weekend', isCompleted: false }
-    ]
+    goals: [{ id: 'g-rodzina', title: 'Kolacja razem w weekend', isCompleted: false }]
   },
   {
-    id: 'travel',
+    id: 'podroze',
     title: 'PODRÓŻE',
     description: 'Planuj nowe miejsca i doświadczenia.',
     iconName: 'Plane',
     bgColor: '#96584E',
-    goals: [
-      { id: 't1', title: 'Zapisać 3 miejsca do odwiedzenia', isCompleted: false }
-    ]
+    goals: [{ id: 'g-podroze', title: 'Zapisać 3 miejsca do odwiedzenia', isCompleted: false }]
   },
   {
-    id: 'education',
+    id: 'edukacja',
     title: 'EDUKACJA',
     description: 'Rozwijaj umiejętności z cierpliwością.',
     iconName: 'BookOpen',
     bgColor: '#8C6046',
-    goals: [
-      { id: 'e1', title: 'Czytać 20 stron tygodniowo', isCompleted: true }
-    ]
+    goals: [{ id: 'g-edukacja', title: 'Czytać 20 stron tygodniowo', isCompleted: true }]
   },
   {
     id: 'sport',
@@ -79,49 +63,39 @@ export const initialCategories: Category[] = [
     description: 'Regularność jest ważniejsza niż intensywność.',
     iconName: 'Dumbbell',
     bgColor: '#8C6046',
-    goals: [
-      { id: 's1', title: 'Trening 3 razy w tygodniu', isCompleted: false }
-    ]
+    goals: [{ id: 'g-sport', title: 'Trening 3 razy w tygodniu', isCompleted: false }]
   },
   {
-    id: 'creativity',
+    id: 'kreatywnosc',
     title: 'KREATYWNOŚĆ',
     description: 'Twórz coś każdego dnia przez chwilę.',
     iconName: 'Sparkles',
     bgColor: '#8C6046',
-    goals: [
-      { id: 'c1', title: 'Napisanie 10 zdań dziennie', isCompleted: false }
-    ]
+    goals: [{ id: 'g-kreatywnosc', title: 'Napisanie 10 zdań dziennie', isCompleted: false }]
   },
   {
-    id: 'home',
+    id: 'dom',
     title: 'DOM',
     description: 'Stwórz spokojne, uporządkowane środowisko.',
     iconName: 'House',
     bgColor: '#2C2725',
-    goals: [
-      { id: 'm1', title: 'Posprzątać stół wieczorem', isCompleted: true }
-    ]
+    goals: [{ id: 'g-dom', title: 'Posprzątać stół wieczorem', isCompleted: true }]
   },
   {
-    id: 'community',
+    id: 'spolecznosc',
     title: 'SPOŁECZNOŚĆ',
     description: 'Zostawiaj po sobie pozytywny ślad.',
     iconName: 'Users',
     bgColor: '#2C2725',
-    goals: [
-      { id: 'u1', title: 'Pomoc w jednej inicjatywie', isCompleted: false }
-    ]
+    goals: [{ id: 'g-spolecznosc', title: 'Pomoc w jednej inicjatywie', isCompleted: false }]
   },
   {
-    id: 'wellbeing',
+    id: 'dobrostan',
     title: 'DOBROSTAN',
     description: 'Pielęgnuj spokój i wewnętrzną równowagę.',
     iconName: 'Leaf',
     bgColor: '#2C2725',
-    goals: [
-      { id: 'b1', title: 'Minuta medytacji rano', isCompleted: true }
-    ]
+    goals: [{ id: 'g-dobrostan', title: 'Minuta medytacji rano', isCompleted: true }]
   }
 ];
 
